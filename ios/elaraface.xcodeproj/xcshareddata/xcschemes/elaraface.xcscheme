@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "devotedmind.app"
-               BlueprintName = "devotedmind"
-               ReferencedContainer = "container:devotedmind.xcodeproj">
+               BuildableName = "elaraface.app"
+               BlueprintName = "elaraface"
+               ReferencedContainer = "container:elaraface.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "devotedmindTests.xctest"
-               BlueprintName = "devotedmindTests"
-               ReferencedContainer = "container:devotedmind.xcodeproj">
+               BuildableName = "elarafaceTests.xctest"
+               BlueprintName = "elarafaceTests"
+               ReferencedContainer = "container:elaraface.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "devotedmind.app"
-            BlueprintName = "devotedmind"
-            ReferencedContainer = "container:devotedmind.xcodeproj">
+            BuildableName = "elaraface.app"
+            BlueprintName = "elaraface"
+            ReferencedContainer = "container:elaraface.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "devotedmind.app"
-            BlueprintName = "devotedmind"
-            ReferencedContainer = "container:devotedmind.xcodeproj">
+            BuildableName = "elaraface.app"
+            BlueprintName = "elaraface"
+            ReferencedContainer = "container:elaraface.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
