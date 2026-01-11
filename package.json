@@ -12,9 +12,9 @@
     "@nozbe/watermelondb": "^0.27.0",
     "@react-spring/three": "^9.6.0",
     "@react-three/cannon": "^6.6.0",
-    "@react-three/drei": "^10.0.0",
-    "@react-three/fiber": "^9.0.0",
-    "@react-three/postprocessing": "^3.0.0",
+    "@react-three/drei": "^9.120.0",
+    "@react-three/fiber": "^8.17.10",
+    "@react-three/postprocessing": "^2.16.0",
     "@xstate/react": "^4.0.0",
     "expo": "~52.0.0",
     "expo-asset": "~11.0.0",
@@ -31,7 +31,8 @@
     "react-native-reanimated": "~3.16.1",
     "three": "^0.170.0",
     "three-pathfinding": "^1.3.0",
-    "xstate": "^5.0.0"
+    "xstate": "^5.0.0",
+    "expo-navigation-bar": "~4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -40,5 +41,8 @@
     "@types/react-native": "~0.73.0",
     "typescript": "^5.1.3"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "react": "18.3.1"
+  }
 }
