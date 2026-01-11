@@ -1,13 +1,16 @@
-import React, { Suspense, useRef } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { Canvas } from '@react-three/fiber/native';
 import { Physics } from '@react-three/cannon';
 import { PerspectiveCamera, SpotLight, useTexture } from '@react-three/drei/native';
-import { EffectComposer, Bloom, Noise, Vignette, ChromaticAberration } from '@react-three/postprocessing';
 import { PlayerController } from '../systems/PlayerController';
 import { HeavyObject } from '../components/HeavyObject';
 import { DiegeticInventory } from '../systems/DiegeticInventory';
 import { InputOverlay } from '../systems/InputOverlay';
+import { StalkerAI } from '../systems/PathfindingController';
+import { InteractiveDoor } from '../components/InteractiveDoor';
+import { VisualEffects } from '../components/VisualEffects';
+import { AudioSystem } from '../systems/AudioSystem';
 import * as THREE from 'three';
 
 // --- Assets & Materials (Placeholders for PBR) ---
@@ -51,29 +54,23 @@ function Atmosphere() {
   );
 }
 
-function VisualEffects({ sanityLevel }) {
-    return (
-      <EffectComposer>
-        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={1.5} />
-        <Noise opacity={0.15} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        {/* Dynamic Sanity Effect */}
-        {sanityLevel < 50 && (
-            <ChromaticAberration offset={[0.002, 0.002]} />
-        )}
-      </EffectComposer>
-    );
-}
-
 export default function HospitalHallway() {
-  // Input State Ref (Bridge between React Native UI and Three.js Loop)
+  // Input State Ref
   const inputState = useRef({
       joystick: new THREE.Vector2(0, 0),
       isInteractingButton: false
   });
 
+  // Shared Refs
+  const playerRef = useRef(null);
+  const enemyRef = useRef(null); // Reference to Stalker for AudioSystem
+
+  // Game State (Synced with XState ideally, here local for simpler binding)
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [health, setHealth] = useState(100);
+  const [sanity, setSanity] = useState(100);
+
   const updateJoystick = (x, y) => {
-      // Invert Y for 3D space usually
       inputState.current.joystick.set(x, y);
   };
 
@@ -96,14 +93,35 @@ export default function HospitalHallway() {
                 <Wall position={[-3, 2.5, 0]} rotation={[0, Math.PI/2, 0]} />
                 <Wall position={[3, 2.5, 0]} rotation={[0, Math.PI/2, 0]} />
 
-                <PlayerController inputState={inputState} />
+                <PlayerController
+                    inputState={inputState}
+                    playerRef={playerRef}
+                    onInteractChange={setIsInteracting}
+                />
 
-                {/* Interactable Heavy Object */}
-                <HeavyObject position={[0, 1, -5]} playerRef={{ current: null }} isInteracting={false} />
+                {/* AI Enemy */}
+                <StalkerAI playerRef={playerRef} />
+
+                {/* Interactive Elements */}
+                <HeavyObject
+                    position={[0, 1, -5]}
+                    playerRef={playerRef}
+                    isInteracting={isInteracting}
+                />
+
+                <InteractiveDoor
+                    position={[2.9, 0, 0]}
+                    isOpen={false}
+                    onInteract={() => console.log('Door Open')}
+                />
             </Physics>
 
             <Atmosphere />
-            <VisualEffects sanityLevel={40} />
+
+            {/* Systems that don't render but need Scene access */}
+            <AudioSystem playerRef={playerRef} enemyRef={enemyRef} playerState={{ health, sanity }} />
+
+            <VisualEffects health={health} sanity={sanity} />
 
             {/* Diegetic Inventory Overlay (3D) */}
             <DiegeticInventory isOpen={true} collectedItems={['rosary', 'photo_torn']} />

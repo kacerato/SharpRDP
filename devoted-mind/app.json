@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "devoted-mind",
-    "slug": "devoted-mind",
+    "name": "elaraface",
+    "slug": "elaraface",
     "version": "1.0.0",
     "orientation": "landscape",
     "icon": "./assets/icon.png",
@@ -11,20 +11,54 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
+    "androidStatusBar": {
+      "hidden": true
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.game.elaraface.app"
     },
     "android": {
+      "package": "com.game.elaraface.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
-      }
+      },
+      "permissions": [
+        "android.permission.VIBRATE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.8.10",
+             "packagingOptions": {
+                "pickFirst": [
+                  "lib/x86/libc++_shared.so",
+                  "lib/x86_64/libc++_shared.so",
+                  "lib/armeabi-v7a/libc++_shared.so",
+                  "lib/arm64-v8a/libc++_shared.so"
+                ]
+             }
+          }
+        }
+      ],
+      "expo-asset",
+      "expo-navigation-bar"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
     }
   }
 }

@@ -8,35 +8,41 @@ export const elaraMachine = createMachine({
     stamina: 100,
     health: 100,
     equippedItem: null,
-    isHurt: false, // Derived from health < 50, but kept for explicit logic
+    isHurt: false,
   },
   states: {
     idle: {
       on: {
         MOVE: { target: 'walking' },
         CROUCH: { target: 'crouching' },
-        INTERACT: { target: 'interacting' }, // Só pode interagir se estiver parada
+        INTERACT: { target: 'interacting' },
         HEAR_NOISE: { target: 'alert' },
         TERRIFY: { target: 'terrified' },
-        HALLUCINATE: { target: 'hallucinating' }
+        HALLUCINATE: { target: 'hallucinating' },
+        HIDE: { target: 'hiding' },
+        TAKE_DAMAGE: { target: 'idle', actions: 'reduceHealth' } // Transition to self to trigger action
       }
     },
     walking: {
       on: {
         STOP: { target: 'idle' },
-        RUN: { target: 'running', cond: (ctx) => ctx.stamina > 0 }, // Guarda (Condition)
-        TERRIFY: { target: 'terrified' }, // Evento de susto
-        HALLUCINATE: { target: 'hallucinating' }
+        RUN: { target: 'running', cond: (ctx) => ctx.stamina > 0 },
+        TERRIFY: { target: 'terrified' },
+        HALLUCINATE: { target: 'hallucinating' },
+        HIDE: { target: 'hiding' },
+        TAKE_DAMAGE: { target: 'walking', actions: 'reduceHealth' }
       }
     },
     running: {
       invoke: {
-        src: 'drainStaminaService' // Serviço que drena stamina enquanto corre
+        src: 'drainStaminaService'
       },
       on: {
         STOP: { target: 'idle' },
         STAMINA_DEPLETED: { target: 'walking' },
-        TERRIFY: { target: 'terrified' }
+        TERRIFY: { target: 'terrified' },
+        HIDE: { target: 'hiding' },
+        TAKE_DAMAGE: { target: 'running', actions: 'reduceHealth' }
       }
     },
     crouching: {
@@ -52,25 +58,28 @@ export const elaraMachine = createMachine({
       }
     },
     interacting: {
-      // Estado Bloqueante: Não pode andar livremente enquanto empurra ou examina
       on: {
-        FINISH_INTERACTION: { target: 'idle' }
+        FINISH_INTERACTION: { target: 'idle' },
+        TAKE_DAMAGE: { target: 'idle', actions: 'reduceHealth' } // Force exit interaction if hit
       }
     },
-    // Estado Psicológico (Paralelo ou Hierárquico)
+    hiding: {
+       on: {
+           EXIT_HIDE: { target: 'idle' }
+       }
+    },
     hallucinating: {
-      entry: 'triggerVisualDistortion', // Ativa o Shader de distorção
+      entry: 'triggerVisualDistortion',
       exit: 'clearVisualDistortion',
       on: {
         TAKE_MEDS: { target: 'idle', actions: 'restoreSanity' },
-        WAIT_IT_OUT: { target: 'idle' } // Temporary recovery
+        WAIT_IT_OUT: { target: 'idle' }
       }
     },
     terrified: {
-       // Forced state where Elara is scared (e.g., looking back while running)
        on: {
            CALM_DOWN: { target: 'idle' },
-           RUN: { target: 'running' } // Can run while terrified, but animation is different
+           RUN: { target: 'running' }
        }
     },
     alert: {
@@ -78,6 +87,9 @@ export const elaraMachine = createMachine({
             RELAX: { target: 'idle' },
             INVESTIGATE: { target: 'walking' }
         }
+    },
+    dying: {
+        type: 'final'
     }
   }
 }, {
@@ -91,6 +103,10 @@ export const elaraMachine = createMachine({
     },
     actions: {
         restoreSanity: assign({ sanity: (ctx) => Math.min(ctx.sanity + 20, 100) }),
+        reduceHealth: assign({
+            health: (ctx) => Math.max(ctx.health - 20, 0),
+            isHurt: (ctx) => (ctx.health - 20) < 50
+        }),
         triggerVisualDistortion: () => console.log('Visual distortion triggered'),
         clearVisualDistortion: () => console.log('Visual distortion cleared')
     }
