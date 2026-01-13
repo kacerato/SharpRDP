@@ -15,8 +15,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Explicitly setting the AGP version for Appflow detection
-        // Using standard Groovy syntax for reliable regex matching
         classpath 'com.android.tools.build:gradle:8.6.0'
         classpath 'com.facebook.react:react-native-gradle-plugin'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin'
