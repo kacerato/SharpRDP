@@ -18,11 +18,24 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# DEBUGGING: List JVMs in Appflow environment to help diagnose path issues
+# Auto-detect Java 17+ to satisfy AGP 8.x requirements in CI environments
+# This addresses the issue where the environment defaults to Java 11.
 if [ -d "/usr/lib/jvm" ]; then
-    echo "--- Debugging: Available JVMs in /usr/lib/jvm ---"
-    ls -la /usr/lib/jvm
-    echo "-------------------------------------------------"
+    # List of known Java 17+ paths in Appflow/CI environments
+    CANDIDATE_JDKS="
+    /usr/lib/jvm/temurin-17-jdk-amd64
+    /usr/lib/jvm/java-17-openjdk-amd64
+    /usr/lib/jvm/msopenjdk-17-amd64
+    /usr/lib/jvm/zulu-17-azure-jdk_x64
+    "
+
+    for jdk in $CANDIDATE_JDKS; do
+        if [ -d "$jdk" ]; then
+            export JAVA_HOME="$jdk"
+            echo "--- Auto-detected and set JAVA_HOME to $JAVA_HOME ---"
+            break
+        fi
+    done
 fi
 
 ##############################################################################
